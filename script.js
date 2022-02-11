@@ -15,6 +15,7 @@ const calculator = {
     storedValue: 0,
     restartDisplay: true,
     canOperate: false,
+    hasDecimal: false,
 
 }
 
@@ -41,7 +42,7 @@ function operate() {
 
     let x = calculator.storedValue;
     let y = calculator.displayValue;
-    let result = operator(x, y);
+    let result = Math.round(operator(x, y) * 10000)/ 10000;
     if (calculator.canOperate) {
         calcWindow.textContent = result;
         calculator.storedValue = 0;
@@ -50,7 +51,24 @@ function operate() {
         calculator.operateClicked = true;
     }
     calculator.canOperate = false;
+    calculator.hasDecimal = false;
 }
+
+function addDecimal(e) {
+    let val = e.target.textContent
+    if (!calculator.hasDecimal) {
+        if (calcWindow.textContent == 0 || calculator.restartDisplay) {
+            calcWindow.textContent = val === '.' ? `0${val}` : val;
+        } else {
+            calcWindow.textContent = `${calcWindow.textContent}${val}`;
+        }
+        calculator.displayValue = +calcWindow.textContent;
+        operateClicked = false;
+        calculator.restartDisplay = false;
+        calculator.hasDecimal = true;
+    }
+}
+
 
 function updateDisplay(e) {
     let val = e.target.textContent
@@ -65,7 +83,7 @@ function updateDisplay(e) {
 }
 
 function updateOperatorAndFirstNum(e) {
-    if(calculator.canOperate) {
+    if (calculator.canOperate) {
         operate();
     }
     let operatorText = e.target.textContent;
@@ -84,6 +102,7 @@ function updateOperatorAndFirstNum(e) {
     calculator.storedValue = calculator.displayValue;
     calculator.restartDisplay = true;
     calculator.operateClicked = false;
+    calculator.hasDecimal = false;
 }
 
 function clearAll() {
@@ -93,6 +112,7 @@ function clearAll() {
     calculator.storedValue = 0;
     calculator.restartDisplay = 0;
     calculator.canOperate = false;
+    calculator.hasDecimal = false;
 }
 
 function percent() {
@@ -118,3 +138,4 @@ operateButton.addEventListener('click', operate);
 clearButton.addEventListener('click', clearAll);
 percentButton.addEventListener('click', percent);
 signButton.addEventListener('click', flipSign);
+decimalButton.addEventListener('click', addDecimal);
