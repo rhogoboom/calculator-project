@@ -7,6 +7,7 @@ const percentButton = document.querySelector('.percent-button');
 const decimalButton = document.querySelector('.decimal-button');
 const operateButton = document.querySelector('.operate-button');
 const signButton = document.querySelector('.sign-button');
+const deleteButton = document.querySelector('.backspace-button')
 
 
 
@@ -134,6 +135,12 @@ function flipSign() {
     calcWindow.textContent = calculator.displayValue;
 }
 
+function removeEnd() {
+    if (calcWindow.textContent.length < 1) return;
+    calcWindow.textContent = calcWindow.textContent.slice(0, -1);
+    calculator.displayValue = calcWindow.textContent.length < 1 ? 0 : +calcWindow.textContent;
+}
+
 // Add Click Listeners
 for (let btn of numButtons) {
     btn.addEventListener('click', updateDisplay);
@@ -147,6 +154,7 @@ clearButton.addEventListener('click', clearAll);
 percentButton.addEventListener('click', percent);
 signButton.addEventListener('click', flipSign);
 decimalButton.addEventListener('click', addDecimal);
+deleteButton.addEventListener('click', removeEnd);
 
 // KeyBoard Support
 
@@ -154,7 +162,7 @@ decimalButton.addEventListener('click', addDecimal);
 window.addEventListener('keydown', function (e) {
     const numKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     const operatorKeys = ['/', '*', '+', '-']
-
+    console.dir(e);
     if (numKeys.includes(e.key)) {
         updateDisplay(e);
     } else if (operatorKeys.includes(e.key)) {
@@ -169,6 +177,8 @@ window.addEventListener('keydown', function (e) {
         percent();
     } else if (e.key === '`') {
         flipSign();
+    } else if (e.key === 'Delete' || e.key === 'Backspace') {
+        removeEnd();
     }
 
 })
