@@ -8,6 +8,8 @@ const decimalButton = document.querySelector('.decimal-button');
 const operateButton = document.querySelector('.operate-button');
 const signButton = document.querySelector('.sign-button');
 
+
+
 // Calculator Object
 const calculator = {
     displayValue: '',
@@ -42,7 +44,7 @@ function operate() {
 
     let x = calculator.storedValue;
     let y = calculator.displayValue;
-    let result = Math.round(operator(x, y) * 10000)/ 10000;
+    let result = Math.round(operator(x, y) * 10000) / 10000;
     if (calculator.canOperate) {
         calcWindow.textContent = result;
         calculator.storedValue = 0;
@@ -54,8 +56,8 @@ function operate() {
     calculator.hasDecimal = false;
 }
 
-function addDecimal(e) {
-    let val = e.target.textContent
+function addDecimal() {
+    let val = '.'
     if (!calculator.hasDecimal) {
         if (calcWindow.textContent == 0 || calculator.restartDisplay) {
             calcWindow.textContent = val === '.' ? `0${val}` : val;
@@ -71,7 +73,13 @@ function addDecimal(e) {
 
 
 function updateDisplay(e) {
-    let val = e.target.textContent
+    let val;
+    if (e.type === 'keydown') {
+        val = e.key;
+    } else {
+        val = e.target.textContent
+    }
+
     if (calcWindow.textContent == 0 || calculator.restartDisplay) {
         calcWindow.textContent = val === '.' ? `0${val}` : val;
     } else {
@@ -86,7 +94,7 @@ function updateOperatorAndFirstNum(e) {
     if (calculator.canOperate) {
         operate();
     }
-    let operatorText = e.target.textContent;
+    let operatorText = e.type === 'keydown' ? e.key : e.target.textContent;
     let operatorFunction;
     if (operatorText === '/') {
         operatorFunction = divide;
@@ -126,7 +134,7 @@ function flipSign() {
     calcWindow.textContent = calculator.displayValue;
 }
 
-// Add Listeners
+// Add Click Listeners
 for (let btn of numButtons) {
     btn.addEventListener('click', updateDisplay);
 }
@@ -139,3 +147,28 @@ clearButton.addEventListener('click', clearAll);
 percentButton.addEventListener('click', percent);
 signButton.addEventListener('click', flipSign);
 decimalButton.addEventListener('click', addDecimal);
+
+// KeyBoard Support
+
+
+window.addEventListener('keydown', function (e) {
+    const numKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    const operatorKeys = ['/', '*', '+', '-']
+
+    if (numKeys.includes(e.key)) {
+        updateDisplay(e);
+    } else if (operatorKeys.includes(e.key)) {
+        updateOperatorAndFirstNum(e);
+    } else if (e.key === 'Escape') {
+        clearAll();
+    } else if (e.key === '=' || e.key === 'Enter') {
+        operate();
+    } else if (e.key === '.') {
+        addDecimal();
+    } else if (e.key === '%') {
+        percent();
+    } else if (e.key === '`') {
+        flipSign();
+    }
+
+})
